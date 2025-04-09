@@ -39,7 +39,9 @@ Adds a QR code to the first page of a PDF file.
 
 1. Start the server:
 ```bash
-uvicorn main:app --reload
+python -m pip install uvicorn
+pip install -r requirements.txt
+python -m uvicorn main:app --reload
 ```
 
 2. Access the Swagger UI:
