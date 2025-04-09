@@ -8,3 +8,4 @@ reportlab==4.0.7
 python-magic-bin==0.4.14
 anyio>=4.5.0
 starlette>=0.41.3 
+svglib==1.5.1
