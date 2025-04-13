@@ -13,6 +13,9 @@ class QRService:
     @staticmethod
     def generate_qr_code_svg(content: str) -> bytes:
         """Generate QR code as SVG bytes."""
+        if not isinstance(content, str) or not content.strip():
+            raise ValueError("Content must be a non-empty string")
+            
         try:
             qr = qrcode.QRCode(
                 version=1,
