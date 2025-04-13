@@ -6,21 +6,21 @@ A FastAPI-based service that adds QR codes to PDF documents. The service places 
 
 - Adds QR codes to PDF documents
 - Maintains original PDF quality and content
-- Adaptive QR code sizing based on page dimensions
+- Configurable QR code sizing and positioning
 - White background for QR code visibility
 - Supports all PDF formats (with relaxed parsing)
 - Input validation and error handling
 - Swagger UI for easy testing
+- Comprehensive test coverage
 
 ## Technical Details
 
 - QR code placement: Top-right corner with configurable margins
-- QR code size: Adaptive, based on page dimensions
-  - Minimum size: 100 points (for readability)
-  - Maximum size: 20% of smallest page dimension
-  - Target size: Calculated based on page area
-- White background padding: 2 points
-- Edge margin: 20 points
+- QR code size: Configurable through settings
+  - Size and margins can be adjusted in configuration
+  - Includes padding for better visibility
+- White background padding: Configurable through settings
+- Edge margin: Configurable through settings
 
 ## API Endpoint
 
@@ -37,46 +37,67 @@ Adds a QR code to the first page of a PDF file.
 
 ## Usage
 
-1. Start the server:
+1. Install dependencies:
 ```bash
-python -m pip install uvicorn
 pip install -r requirements.txt
+```
+
+2. Start the server:
+```bash
 python -m uvicorn main:app --reload
 ```
 
-2. Access the Swagger UI:
+3. Access the Swagger UI:
 ```
 http://127.0.0.1:8000/docs
 ```
 
-3. Use the /add-qr-to-pdf/ endpoint to upload a PDF and specify QR content
+4. Use the /add-qr-to-pdf/ endpoint to upload a PDF and specify QR content
 
 ## Dependencies
 
 - FastAPI
-- PyPDF2
-- qrcode
+- pypdf (>=4.0.0)
+- qrcode[svg]
 - reportlab
 - svglib
-- python-magic
+- python-magic-bin
+- pydantic and pydantic-settings
+- Testing: pytest, pytest-asyncio, pytest-cov, httpx
 
 ## Error Handling
 
 - Validates PDF structure before processing
 - Checks file MIME type
 - Provides detailed error messages
-- Logs errors for debugging
+- Comprehensive logging system
+- Error tracking and debugging support
 
 ## Development
 
-The code includes comprehensive logging:
-- INFO level for main application
-- WARNING level for svglib
-- ERROR level for PyPDF2
+The project includes:
+- Comprehensive test suite with pytest
+- Code coverage reporting
+- Async testing support
+- Development server with auto-reload
+- Editor configuration (.editorconfig)
+
+## Testing
+
+Run tests with coverage:
+```bash
+pytest --cov=app tests/
+```
+
+View coverage report:
+```bash
+pytest --cov=app --cov-report=html tests/
+```
 
 ## Notes
 
 - The service modifies only the first page of the PDF
 - Original PDF pages after the first page remain unchanged
 - QR codes include error correction
-- White background ensures readability on any document 
+- White background ensures readability on any document
+- All QR code parameters are configurable through settings
