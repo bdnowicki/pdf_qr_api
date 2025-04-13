@@ -1,6 +1,6 @@
 from typing import Tuple
 import io
-from PyPDF2 import PdfReader, PdfWriter
+from pypdf import PdfReader, PdfWriter
 from fastapi import HTTPException
 import logging
 
@@ -11,7 +11,7 @@ class PDFService:
     def validate_pdf(pdf_bytes: bytes) -> bool:
         """Validate PDF file structure and basic content."""
         try:
-            reader = PdfReader(io.BytesIO(pdf_bytes), strict=False)
+            reader = PdfReader(io.BytesIO(pdf_bytes))
             if len(reader.pages) == 0:
                 return False
             _ = reader.pages[0]  # Verify first page is accessible
@@ -24,7 +24,7 @@ class PDFService:
     def get_page_dimensions(pdf_bytes: bytes) -> Tuple[float, float]:
         """Get dimensions of the first page of a PDF."""
         try:
-            reader = PdfReader(io.BytesIO(pdf_bytes), strict=False)
+            reader = PdfReader(io.BytesIO(pdf_bytes))
             if len(reader.pages) == 0:
                 raise HTTPException(status_code=400, detail="PDF file is empty")
             
@@ -38,7 +38,7 @@ class PDFService:
     def merge_pdf_pages(original_pdf: bytes, qr_overlay: bytes) -> bytes:
         """Merge original PDF with QR code overlay."""
         try:
-            reader = PdfReader(io.BytesIO(original_pdf), strict=False)
+            reader = PdfReader(io.BytesIO(original_pdf))
             writer = PdfWriter()
             
             # Merge first page with QR code

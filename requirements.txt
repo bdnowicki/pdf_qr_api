@@ -1,7 +1,7 @@
 fastapi>=0.88.0
 uvicorn>=0.24.0
 python-multipart==0.0.6
-PyPDF2==3.0.1
+pypdf>=4.0.0
 qrcode[svg]==7.4.2
 Pillow>=10.0.0
 reportlab==4.0.7
@@ -11,3 +11,9 @@ starlette>=0.41.3
 svglib==1.5.1
 pydantic-settings>=2.0.0
 pydantic>=2.0.0
+
+# Testing dependencies
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+httpx>=0.24.0
+pytest-cov>=4.1.0

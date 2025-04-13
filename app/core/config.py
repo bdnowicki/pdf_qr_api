@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
+from pydantic import ConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "PDF QR Code API"
@@ -14,7 +15,6 @@ class Settings(BaseSettings):
     QR_CODE_MARGIN: int = 20
     QR_CODE_PADDING: int = 2
     
-    class Config:
-        case_sensitive = True
+    model_config = ConfigDict(case_sensitive=True)
 
 settings = Settings() 

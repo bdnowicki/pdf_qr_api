@@ -13,6 +13,7 @@ def configure_logging() -> None:
     loggers: Dict[str, int] = {
         'svglib.svglib': logging.WARNING,
         'PyPDF2': logging.ERROR,
+        'pypdf': logging.ERROR,
         'uvicorn': logging.INFO,
         'fastapi': logging.INFO
     }
