@@ -115,15 +115,15 @@ def add_qr_to_pdf(pdf_bytes: bytes, qr_content: str) -> bytes:
         svg_file = io.BytesIO(qr_svg)
         drawing = svg2rlg(svg_file)
         
+        # Resize drawing to exactly 100x100
+        drawing.scale(100/drawing.width, 100/drawing.height)
+        
         # Create QR code overlay
         packet = io.BytesIO()
         can = canvas.Canvas(packet, pagesize=(page_width, page_height))
         
-        # Calculate adaptive QR code size
-        min_qr_size = 100  # Minimum readable size in points
-        max_qr_size = min(page_width, page_height) * 0.2
-        target_size = (page_width * page_height) ** 0.3 * 0.1
-        qr_size = max(min_qr_size, min(target_size, max_qr_size))
+        # Set fixed QR code size
+        qr_size = 100  # Fixed size in points
         
         # Position QR code in top-right corner with margins
         margin = 20  # Edge margin in points
@@ -132,8 +132,8 @@ def add_qr_to_pdf(pdf_bytes: bytes, qr_content: str) -> bytes:
         y = page_height - qr_size - margin - padding 
         
         # Draw white background for contrast
-        can.setFillColorRGB(1, 1, 1)
-        can.rect(x - padding, y - padding, qr_size + 2*padding, qr_size + 2*padding, fill=1, stroke=0)
+        can.setFillColorRGB(255, 1, 1)
+        can.rect(x - padding, y - padding, qr_size + 2*padding, qr_size + 2*padding, fill=1, stroke=1)
         
         # Add QR code and merge with original
         renderPDF.draw(drawing, can, x, y)
