@@ -6,6 +6,7 @@ import io
 from app.services.pdf_service import PDFService
 from app.services.qr_service import QRService
 from app.core.config import settings
+import urllib.parse
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -17,7 +18,11 @@ async def add_qr_to_pdf(
 ) -> StreamingResponse:
     """Add QR code to the first page of a PDF file."""
     try:
-        logger.info(f"Processing file: {pdf_file.filename}")
+        # Properly handle Unicode filename
+        filename = pdf_file.filename
+        if isinstance(filename, str):
+            filename = urllib.parse.unquote(filename)
+        logger.info(f"Processing file: {filename}")
         
         # Validate PDF mime type
         first_chunk = await pdf_file.read(2048)
@@ -49,11 +54,9 @@ async def add_qr_to_pdf(
             io.BytesIO(result_bytes),
             media_type="application/pdf",
             headers={
-                "Content-Disposition": f"attachment; filename=modified_{pdf_file.filename}"
+                "Content-Disposition": f'attachment; filename="{urllib.parse.quote(filename)}"'
             }
         )
-    except HTTPException:
-        raise
     except Exception as e:
         logger.error(f"Error in endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e)) 
