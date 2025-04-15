@@ -57,6 +57,9 @@ async def add_qr_to_pdf(
                 "Content-Disposition": f'attachment; filename="{urllib.parse.quote(filename)}"'
             }
         )
+    except HTTPException:
+        # Re-raise HTTP exceptions to maintain their status codes
+        raise
     except Exception as e:
         logger.error(f"Error in endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e)) 
