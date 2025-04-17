@@ -3,6 +3,8 @@ import io
 from pypdf import PdfReader, PdfWriter
 from fastapi import HTTPException
 import logging
+from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -35,22 +37,27 @@ class PDFService:
             raise HTTPException(status_code=400, detail="Invalid PDF file")
 
     @staticmethod
-    def merge_pdf_pages(original_pdf: bytes, qr_overlay: bytes) -> bytes:
-        """Merge original PDF with QR code overlay."""
+    async def merge_pdf_pages(original_pdf: bytes, qr_overlay: bytes) -> bytes:
+        """Merge original PDF with QR code overlay using concurrent processing."""
         try:
             reader = PdfReader(io.BytesIO(original_pdf))
             writer = PdfWriter()
             
-            # Merge first page with QR code
+            # Process first page with QR code
             first_page = reader.pages[0]
             qr_reader = PdfReader(io.BytesIO(qr_overlay))
             first_page.merge_page(qr_reader.pages[0])
-            
-            # Add all pages to output
             writer.add_page(first_page)
-            for page in reader.pages[1:]:
+            
+            # Process remaining pages concurrently
+            async def process_page(page):
                 writer.add_page(page)
             
+            # Create tasks for remaining pages
+            tasks = [process_page(page) for page in reader.pages[1:]]
+            await asyncio.gather(*tasks)
+            
+            # Write the final PDF
             output_stream = io.BytesIO()
             writer.write(output_stream)
             output_stream.seek(0)

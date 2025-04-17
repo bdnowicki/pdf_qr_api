@@ -6,13 +6,16 @@ from reportlab.graphics import renderPDF
 from svglib.svglib import svg2rlg
 import logging
 from app.core.config import settings
+from functools import lru_cache
+import hashlib
 
 logger = logging.getLogger(__name__)
 
 class QRService:
     @staticmethod
+    @lru_cache(maxsize=100)  # Cache up to 100 unique QR codes
     def generate_qr_code_svg(content: str) -> bytes:
-        """Generate QR code as SVG bytes."""
+        """Generate QR code as SVG bytes with caching."""
         if not isinstance(content, str) or not content.strip():
             raise ValueError("Content must be a non-empty string")
             
@@ -38,8 +41,9 @@ class QRService:
             raise
 
     @staticmethod
+    @lru_cache(maxsize=100)  # Cache up to 100 unique overlays
     def create_qr_overlay(qr_svg: bytes, page_width: float, page_height: float) -> bytes:
-        """Create PDF overlay with QR code."""
+        """Create PDF overlay with QR code with caching."""
         try:
             # Convert SVG to drawing
             svg_file = io.BytesIO(qr_svg)
